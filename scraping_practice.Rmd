@@ -1,0 +1,108 @@
+---
+title: "Initial scraping practice"
+output: html_notebook
+---
+
+```{r}
+library(xml2)
+library(plyr)
+library(rvest)
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+parfum <- read_html("https://www.wikiparfum.com/en/fragrances/wood-sage-sea-salt-2024")
+```
+
+```{r}
+parfum %>% 
+  html_element(".flex-wrap") %>% 
+  html_children() %>% 
+  html_text()
+```
+```{r}
+fraglist <- read_xml("https://www.wikiparfum.com/fragrances_sitemap_en_0.xml")
+
+fraglist %>% 
+  xml_children()
+```
+
+
+
+```{r}
+fragranceURLs <- c("https://www.wikiparfum.com/en/fragrances/wood-sage-sea-salt-2024")
+
+fragrence <- tibble(URL = fragranceURLs) %>% 
+  mutate(HTML = map(URL, read_html))
+```
+
+```{r}
+fragrence %>% 
+  mutate(frag.name = map(HTML, ~.x %>% 
+                     html_element("productHero") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+  mutate(ingredients = map(HTML, ~ .x %>% 
+                              html_element(".flex-wrap") %>% 
+                              html_children() %>% 
+                              html_text())) %>% 
+mutate(price = map(HTML, ~.x %>% 
+                     html_element(".flex-col") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+mutate(olfactive.class = map(HTML, ~.x %>% 
+                     html_element(".grid-cols-3") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+mutate(world.clasif = map(HTML, ~.x %>% 
+                     html_elements(".flex-col.gap-4") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+  mutate(description = map(HTML, ~.x %>% 
+                     html_element(".w-full flex justify-between items-center py-6") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+  mutate(data.sheet = map(HTML, ~.x %>% 
+                     html_element(".py-4 bg-white rounded-lg px-6 relative") %>% 
+                     html_children() %>% 
+                            html_text())) %>% 
+  mutate(perfumer = map(HTML, ~.x %>% 
+                     html_element(".flex-col.lg") %>% 
+                     html_children() %>% 
+                            html_text()))  
+  
+
+```
+
+# Web-scraping the J! Archive
+
+Let's say we want to understand how _this_ & _these_ are used in _Jeopardy!_ clues.
+We can scrape the fabulous [J! Archive](https://www.j-archive.com/index.php).
+
+We'll start with a single _Jeopardy!_ game from August 2021...
+
+```{r}
+j7117 <- read_html("https://www.j-archive.com/showgame.php?game_id=7117")
+```
+
+...and try to write a function `get_clues()` that takes as input the game's `game_id` (from the J! Archive) and returns a dataframe like the following:
+
+```{r}
+read_csv("jeopardy7117-clues.csv", col_types="cciic")
+```
+
+# Multiple pages
+
+Now let's apply `clue_df()` to multiple pages.
+
+```{r}
+season37 <- read_html("https://www.j-archive.com/showseason.php?season=37")
+```
+
+
+
+# Session info
+
+```{r}
+sessionInfo()
