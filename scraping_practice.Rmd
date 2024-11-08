@@ -38,41 +38,59 @@ fragrence <- tibble(URL = fragranceURLs) %>%
 ```
 
 ```{r}
-fragrence %>% 
+test <- fragrence %>% 
+  # almost correct element
   mutate(frag.name = map(HTML, ~.x %>% 
-                     html_element("productHero") %>% 
+                     html_element(".xl\\:col-start-5") %>% 
                      html_children() %>% 
                             html_text())) %>% 
+                           #somehow need to remove brand from name
+  # correct element
   mutate(ingredients = map(HTML, ~ .x %>% 
                               html_element(".flex-wrap") %>% 
                               html_children() %>% 
                               html_text())) %>% 
+# correct element, need to remove "info"
 mutate(price = map(HTML, ~.x %>% 
-                     html_element(".flex-col") %>% 
-                     html_children() %>% 
-                            html_text())) %>% 
+                     html_element(".text-16.flex.gap-2") %>% 
+                            html_text())) %>%
+  
+ # almost correct element. needs some tidying
 mutate(olfactive.class = map(HTML, ~.x %>% 
-                     html_element(".grid-cols-3") %>% 
+                     html_element(".p-3") %>% 
                      html_children() %>% 
                             html_text())) %>% 
+# incorrect elemnt
 mutate(world.clasif = map(HTML, ~.x %>% 
-                     html_elements(".flex-col.gap-4") %>% 
-                     html_children() %>% 
+                     html_element(".text-16") %>%
+                       html_children() %>%
                             html_text())) %>% 
+#Correct path!
   mutate(description = map(HTML, ~.x %>% 
-                     html_element(".w-full flex justify-between items-center py-6") %>% 
-                     html_children() %>% 
+                     html_element(".pb-3") %>% 
                             html_text())) %>% 
-  mutate(data.sheet = map(HTML, ~.x %>% 
-                     html_element(".py-4 bg-white rounded-lg px-6 relative") %>% 
-                     html_children() %>% 
+ #correct path
+   mutate(origin = map(HTML, ~.x %>% 
+                     html_element(".py-5") %>% 
                             html_text())) %>% 
+  # correct path 
+  mutate(gender = map(HTML, ~.x %>% 
+                     html_element(".border-gold200:nth-child(2)") %>% 
+                            html_text())) %>% 
+  # correct path
+    mutate(year = map(HTML, ~.x %>% 
+                     html_element(".border-gold200:nth-child(3)") %>% 
+                            html_text())) %>% 
+  # correct path
+    mutate(concepts = map(HTML, ~.x %>% 
+                     html_element(".border-gold200~ .border-gold200+ .border-gold200") %>% 
+                            html_text())) %>% 
+  # incorrect path
   mutate(perfumer = map(HTML, ~.x %>% 
-                     html_element(".flex-col.lg") %>% 
-                     html_children() %>% 
+                     html_element(".pt-5.gap-4") %>% 
                             html_text()))  
   
-
+test$perfumer
 ```
 
 # Web-scraping the J! Archive
