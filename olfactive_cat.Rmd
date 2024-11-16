@@ -1,0 +1,87 @@
+---
+title: "Olfactive Categories"
+author: "Maia Rosenberg"
+date: "16 Nov 2024"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+olf_cat <- read_csv("/Users/maiarosenberg/Documents/College Folders/Ling MA/DataScience/Final Project/Data/Horberg_OlfactoryDescriptors.csv")
+```
+```{r}
+head(olf_cat)
+```
+```{r}
+colnames(olf_cat)
+```
+
+```{r}
+mini_olf_cat <- olf_cat %>% 
+  select(-c(3:7,))
+
+mini_olf_cat
+```
+
+```{r}
+mini_olf_cat2 <- mini_olf_cat %>% 
+  select(-c("Descriptor", "Concreteness", "Imageability", "Gustatory","Olfactory", "Visual", "Auditory", "Haptic", "Interoceptive", "DominantModality", "Valence", "Arousal"))
+
+mini_olf_cat2
+```
+```{r}
+SourceCat <- mini_olf_cat %>% 
+  filter(Category == "Source")
+
+SourceCat$Lemma
+
+AbstractCat <- mini_olf_cat %>% 
+  filter(Category == "Abstract")
+
+AbstractCat$Lemma
+
+EvaluativeCat <- mini_olf_cat %>% 
+  filter(Category == "Evaluative")
+
+EvaluativeCat$Lemma
+
+TechnicalCat <- mini_olf_cat %>% 
+  filter(Category == "Technical")
+
+TechnicalCat$Lemma
+
+MetaCat <- mini_olf_cat %>% 
+  filter(Category == "Meta-sensory")
+
+MetaCat$Lemma
+
+OtherCat <- mini_olf_cat %>% 
+  filter(Category == "Other")
+
+OtherCat$Lemma
+
+NameCat <- mini_olf_cat %>% 
+  filter(Category == "Name")
+
+NameCat$Lemma
+
+#as.tibble(SourceCat$Lemma, AbstractCat$Lemma, EvaluativeCat$Lemma, TechnicalCat$Lemma, MetaCat$Lemma)
+
+as.tibble(SourceCat)
+```
+
+Create a function that answers:
+Q1: Are there any of "Source" (Abstract/Evaluative/Technical/Meta/Other/Name) words in col "Description"?
+Q2: Tally of each?
+
+Create a df that would look like:
+
+Scent | Source | Abstract | Evaluative| Technical | Meta | Other | Name | Price
+------| -------| ---------| ----------| ----------| -----| ------| -----| ------
+wood  |    2   |    0     |     1     |     3     |   0  |   0   |   0  |   L2
+
+
+DF: Row = scent, col = olf cats and price
